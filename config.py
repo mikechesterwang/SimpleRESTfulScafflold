@@ -20,7 +20,7 @@ def connection():
     return pymysql.connect(
         host="localhost",
         user="root",
-        password="0615**mysql",
+        password="password",
         database="sedb",
         cursorclass=pymysql.cursors.DictCursor
     )
