@@ -10,6 +10,9 @@ api = Namespace('auth', description='Authentication operation')
 
 @api.route('')
 class Auth(Resource):
+
+    # get user id : used for jwt
+
     @api.doc("Get the user information")
     @api.marshal_with(jmfc.construct('user_id', {
         'id': fields.String
@@ -17,6 +20,8 @@ class Auth(Resource):
     @jwt_required()
     def get(self):
         return JSendResponse(True, {"id": current_user['id']})
+
+    # login
 
     login_parser = rpc.construct([
         ['username', str, True],
@@ -35,11 +40,15 @@ class Auth(Resource):
             return JSendResponse(True, data={'auth_token': token})
         except Exception as e:
             return JSendResponse(False, message=e)
-    
+
+    # change password
+
     change_pwd_parser = rpc.construct([
         ['username', str, True],
         ['old_password', str, True],
-        ['new_password', str, True]
+        ['new_password', str, True],
+        ['email', str, True],
+        ['code', str, True]
     ])
     @api.doc("Change password")
     @api.expect(change_pwd_parser, validate=True)
@@ -47,6 +56,42 @@ class Auth(Resource):
     def put(self):
         try:
             args = Auth.change_pwd_parser.parse_args()
+            auth_model.change_password(args["username"], args["old_password"], args["new_password"], args["email"], args["code"])
+            return JSendResponse(True)
+        except Exception as e:
+            return JSendResponse(False, message=e)
+
+@api.route('/registry')
+class Registry(Resource):
+
+    # get verification code
+    get_code_parser = rpc.construct([
+        ['email', str, True]
+    ])
+
+    @api.doc("Get verification code")
+    @api.marshal_with(jmfc.construct())
+    def get(self):
+        try:
+            args = Registry.get_code_parser.parse_args()
+            auth_model.get_code(args['email'])
+            return JSendResponse(True)
+        except Exception as e:
+            return JSendResponse(False, message=e)
+    
+    # register code
+    register_parser = rpc.construct([
+        ['username', str, True],
+        ['password', str, True],
+        ['email', str, True],
+        ['code', str, True]
+    ])
+    @api.expect(register_parser, validate=True)
+    @api.marshal_with(jmfc.construct())
+    def put(self):
+        try:
+            args = Registry.register_parser.parse_args()
+            auth_model.register(args['username'], args['password'], args['email'], args['code'])
             return JSendResponse(True)
         except Exception as e:
             return JSendResponse(False, message=e)

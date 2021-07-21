@@ -8,7 +8,7 @@ A simple Flask RESTful + Swagger + JWT Authorization + MySQL solution.
 
 1. Install all requirements in `requirements.txt`
 
-2. open `config.py` and modify the following variables:
+2. rename `config-sample.py` to `config.py` and modify the following variables:
 
    ​	`ip`: ip address of your application
 
@@ -19,12 +19,18 @@ A simple Flask RESTful + Swagger + JWT Authorization + MySQL solution.
    ​	`connection`: The MySQL connector
 
 3. Create a `user` table in database. The table should contains the following fields:
-   1. `id`: primary key, auto Increment
+   1. `id`: INT, primary key, auto Increment
    2. `username`: varchar(512), not null
    3. `password`: varchar(512), not null
-   4. `sale`: varchar(45), not null
+   4. `email`: varchar(512), not null
+   5. `status`: varchar(45), null (This field is unused.)
 
-4. Run `python server.py`
+4. Create a `verification_code` table in database. The table should contains the following fields:
+   1. `email`: VARCHAR(512), primary key, not null
+   2. `code`: VARCHAR(8), not null
+   3. `created_time`: DATETIME, not null
+
+5. Run `python server.py`
 
 
 
@@ -32,7 +38,6 @@ A simple Flask RESTful + Swagger + JWT Authorization + MySQL solution.
 
 1. JWT authorization: https://flask-jwt-extended.readthedocs.io/en/stable/
 2. Restx (RESTful + swagger): https://flask-restx.readthedocs.io/en/latest/
-
 3. PyMySQL: https://pymysql.readthedocs.io/en/latest/
 
 
