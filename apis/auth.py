@@ -70,6 +70,7 @@ class Registry(Resource):
     ])
 
     @api.doc("Get verification code")
+    @api.expect(get_code_parser, validate=True)
     @api.marshal_with(jmfc.construct())
     def get(self):
         try:
